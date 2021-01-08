@@ -1,3 +1,7 @@
+# Refectoring in Progress
+* Service name as path not as query
+* Yaml can use as Config file to allow more host to check
+
 # grpc_health_proxy
 
 `grpc_health_proxy` is a webserver proxy for [gRPC Health Checking Protocol][hc].
