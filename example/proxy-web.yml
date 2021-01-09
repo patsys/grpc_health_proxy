@@ -1,0 +1,40 @@
+---
+server:
+  cli: false
+  service: 
+  address: 127.0.0.1:5050
+  path: /health
+  certPath:
+  keyPath:
+  mlsCA:
+  mtlsEnabled: false
+  timeout: 20s
+probe:
+  userAgent: testRpc
+  timeout: 20s
+hosts:
+  # cli is requiue need not used set dumme value
+  cli:
+    address: dummy:1
+#    tlsEnabled: true
+#    tlsNoVerfiy: true
+#    tlsCaPath: certs/CA_crt.pem
+#    mtlsCertPath: certs/client_crt.pem
+#    mtlsKeyPath: certs/client_key.pem
+#    sniServerName: 127.0.0.1:5051
+  first:
+    address: 127.0.0.1:5051
+    tlsEnabled: true
+    tlsNoVerfiy: true
+#    tlsCaPath: certs/CA_crt.pem
+#    mtlsCertPath: certs/client_crt.pem
+#    mtlsKeyPath: certs/client_key.pem
+#    sniServerName: 127.0.0.1:5051
+  second:
+    address: 127.0.0.1:5051
+    tlsEnabled: true
+    tlsNoVerfiy: true
+#    tlsCaPath: certs/CA_crt.pem
+#    mtlsCertPath: certs/client_crt.pem
+#    mtlsKeyPath: certs/client_key.pem
+#    sniServerName: 127.0.0.1:5051

@@ -2,7 +2,7 @@
 
 > **_NOTE:_**  This is Forked from  salrashid123/grpc_health_proxy the cli mode is Compatible with the original, the webserver url have changed to /{helthpath} for check proxy run, /{helthpath}/{host} to check grpc on host run and /{helthpath}/{host}/{service} to check service on host.
 
-> **_NOTE:_**  The Cli parameter use as host cli and when in the config file under hosts.cli parameter set then the cli arguments will overwrite.
+> **_NOTE:_**  The Cli parameter use as host cli and when in the config file under hosts.cli parameter set then the cli arguments will overwrite. The cli host is require set cli.address to a dummy addresss it will not be used.
 
 `grpc_health_proxy` is a webserver proxy for [gRPC Health Checking Protocol][hc].
 
