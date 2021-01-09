@@ -105,7 +105,7 @@ func init() {
 	flag.StringVar(&configFlag, "config", "", "configFile")
 	flag.StringVar(&cfg.FlProbeConfig.FlUserAgent, "user-agent", "grpc_health_proxy", "user-agent header value of health check requests")
 	flag.BoolVar(&cfg.FlServer.FlRunCli, "runcli", false, "execute healthCheck via CLI; will not start webserver")
-	flag.StringVar(&cfg.FlServer.FlServiceName, "service-name", "", "service name to check.  If specified, server will ignore ?serviceName= request parameter")
+	flag.StringVar(&cfg.FlServer.FlServiceName, "service-name", "", "service name to check.  Used cli mode only")
 	// settings for HTTPS lisenter
 	flag.StringVar(&cfg.FlServer.FlHTTPListenAddr, "http-listen-addr", "localhost:8080", "(required) http host:port to listen (default: localhost:8080")
 	flag.StringVar(&cfg.FlServer.FlHTTPListenPath, "http-listen-path", "/", "path to listen for healthcheck traffic (default '/')")
@@ -166,7 +166,7 @@ func init() {
 			argError("-grpcaddr(hosts."+ path + ".address) not specified")
 		}
 		if !config.FlGrpcTLS && config.FlGrpcTLSNoVerify {
-			argError("specified -grpc-tls-no-verify(hosts."+ path + ".tlsNoVerfiy) without specifying -grpctls(hosts."+ path + ".tlsEnabled")
+			argError("specified -grpc-tls-no-verify(hosts."+ path + ".tlsNoVerfiy) without specifying -grpctls(hosts."+ path + ".tlsEnabled)")
 		}
 		if !config.FlGrpcTLS && config.FlGrpcTLSCACert != "" {
 			argError("specified -grpc-ca-cert(hosts."+ path + ".tlsCaPath) without specifying -grpctls(hosts."+ path + ".tlsEnabled")

@@ -1,8 +1,8 @@
-# Refectoring in Progress
-* Service name as path not as query
-* Yaml can use as Config file to allow more host to check
-
 # grpc_health_proxy
+
+> **_NOTE:_**  This is Forked from  salrashid123/grpc_health_proxy the cli mode is Compatible with the original, the webserver url have changed to /{helthpath} for check proxy run, /{helthpath}/{host} to check grpc on host run and /{helthpath}/{host}/{service} to check service on host.
+
+> **_NOTE:_**  The Cli parameter use as host cli and when in the config file under hosts.cli parameter set then the cli arguments will overwrite.
 
 `grpc_health_proxy` is a webserver proxy for [gRPC Health Checking Protocol][hc].
 
