@@ -38,36 +38,35 @@ import (
 )
 
 type Config struct {
-	flServer ServerConfig `yaml:"server"`
-	flProbeConfig ProbeConfig `yaml:"probe"`
-	flProbeRequestConifg map[string]ProbeRequestConfig `yaml:"hosts,omitemty"`
+	FlServer ServerConfig `yaml:"server,omitempty"`
+	FlProbeConfig ProbeConfig `yaml:"probe,omitempty"`
+	FlProbeRequestConifg map[string]ProbeRequestConfig `yaml:"hosts"`
 }
 
 type ServerConfig struct {
-	flRunCli         bool
-	flServiceName    string
-	flHTTPListenAddr string `yaml:"address"`
-	flHTTPListenPath string `yaml:"path"`
-	flHTTPSTLSServerCert string `yaml:"certPath"`
-	flHTTPSTLSServerKey string `yaml:"keyPath"`
-	flHTTPSTLSVerifyCA string `yaml:"mtlsCA"`
-	flHTTPSTLSVerifyClient bool `yaml:"mtlsEnabled"`
-	flConnTimeout   time.Duration `yaml:"timeout"`
+	FlRunCli         bool `yaml:"cli,omitempty"`
+	FlServiceName    string `yaml:"service,omitempty"`
+	FlHTTPListenAddr string `yaml:"address,omitempty"`
+	FlHTTPListenPath string `yaml:"path,omitempty"`
+	FlHTTPSTLSServerCert string `yaml:"certPath,omitempty"`
+	FlHTTPSTLSServerKey string `yaml:"keyPath,omitempty"`
+	FlHTTPSTLSVerifyCA string `yaml:"mtlsCA,omitempty"`
+	FlHTTPSTLSVerifyClient bool `yaml:"mtlsEnabled,omitempty"`
+	FlConnTimeout   time.Duration `yaml:"timeout,omitempty"`
 }
 type ProbeConfig struct {
-	flUserAgent     string `yaml:"userAgent"`
-	flRPCTimeout    time.Duration `yaml:"timeout"`
+	FlUserAgent     string `yaml:"userAgent,omitempty"`
+	FlRPCTimeout    time.Duration `yaml:"timeout,omitempty"`
 }
 
 type ProbeRequestConfig struct {
-	flGrpcServerAddr string `yaml:"address"`
-	flGrpcTLS       bool `yaml:tlsEnabled"`
-	flGrpcTLSNoVerify   bool `yaml:"tlsNoVerfiy"`
-	flGrpcTLSCACert     string `yaml:"tlsCaPath"`
-	flGrpcTLSClientCert string `yaml:"mtlsCertPath"`
-	flGrpcTLSClientKey  string `yaml:"mtlsKeyPath"`
-	flGrpcSNIServerName string `yaml:"sniServerName"`
-	flHttpListenPath string `yaml:"path"`
+	FlGrpcServerAddr string `yaml:"address,omitempty"`
+	FlGrpcTLS       bool `yaml:"tlsEnabled,omitempty"`
+	FlGrpcTLSNoVerify   bool `yaml:"tlsNoVerfiy,omitempty"`
+	FlGrpcTLSCACert     string `yaml:"tlsCaPath,omitempty"`
+	FlGrpcTLSClientCert string `yaml:"mtlsCertPath,omitempty"`
+	FlGrpcTLSClientKey  string `yaml:"mtlsKeyPath,omitempty"`
+	FlGrpcSNIServerName string `yaml:"sniServerName,omitempty"`
 	opts []grpc.DialOption
 }
 
@@ -100,144 +99,144 @@ const (
 
 func init() {
 	var probeRequestConifg  = ProbeRequestConfig{}
-	cfg.flServer = ServerConfig{}
-	cfg.flProbeConfig = ProbeConfig{}
-	cfg.flProbeRequestConifg = make(map[string]ProbeRequestConfig)
+	cfg.FlServer = ServerConfig{}
+	cfg.FlProbeConfig = ProbeConfig{}
+	cfg.FlProbeRequestConifg = make(map[string]ProbeRequestConfig)
 	flag.StringVar(&configFlag, "config", "", "configFile")
-	flag.StringVar(&cfg.flProbeConfig.flUserAgent, "user-agent", "grpc_health_proxy", "user-agent header value of health check requests")
-	flag.BoolVar(&cfg.flServer.flRunCli, "runcli", false, "execute healthCheck via CLI; will not start webserver")
-	flag.StringVar(&cfg.flServer.flServiceName, "service-name", "", "service name to check.  If specified, server will ignore ?serviceName= request parameter")
+	flag.StringVar(&cfg.FlProbeConfig.FlUserAgent, "user-agent", "grpc_health_proxy", "user-agent header value of health check requests")
+	flag.BoolVar(&cfg.FlServer.FlRunCli, "runcli", false, "execute healthCheck via CLI; will not start webserver")
+	flag.StringVar(&cfg.FlServer.FlServiceName, "service-name", "", "service name to check.  If specified, server will ignore ?serviceName= request parameter")
 	// settings for HTTPS lisenter
-	flag.StringVar(&cfg.flServer.flHTTPListenAddr, "http-listen-addr", "localhost:8080", "(required) http host:port to listen (default: localhost:8080")
-	flag.StringVar(&cfg.flServer.flHTTPListenPath, "http-listen-path", "/", "path to listen for healthcheck traffic (default '/')")
-	flag.StringVar(&cfg.flServer.flHTTPSTLSServerCert, "https-listen-cert", "", "TLS Server certificate to for HTTP listner")
-	flag.StringVar(&cfg.flServer.flHTTPSTLSServerKey, "https-listen-key", "", "TLS Server certificate key to for HTTP listner")
-	flag.StringVar(&cfg.flServer.flHTTPSTLSVerifyCA, "https-listen-ca", "", "Use CA to verify client requests against CA")
-	flag.BoolVar(&cfg.flServer.flHTTPSTLSVerifyClient, "https-listen-verify", false, "Verify client certificate provided to the HTTP listner")
+	flag.StringVar(&cfg.FlServer.FlHTTPListenAddr, "http-listen-addr", "localhost:8080", "(required) http host:port to listen (default: localhost:8080")
+	flag.StringVar(&cfg.FlServer.FlHTTPListenPath, "http-listen-path", "/", "path to listen for healthcheck traffic (default '/')")
+	flag.StringVar(&cfg.FlServer.FlHTTPSTLSServerCert, "https-listen-cert", "", "TLS Server certificate to for HTTP listner")
+	flag.StringVar(&cfg.FlServer.FlHTTPSTLSServerKey, "https-listen-key", "", "TLS Server certificate key to for HTTP listner")
+	flag.StringVar(&cfg.FlServer.FlHTTPSTLSVerifyCA, "https-listen-ca", "", "Use CA to verify client requests against CA")
+	flag.BoolVar(&cfg.FlServer.FlHTTPSTLSVerifyClient, "https-listen-verify", false, "Verify client certificate provided to the HTTP listner")
 	// timeouts
-	flag.DurationVar(&cfg.flServer.flConnTimeout, "connect-timeout", time.Second, "timeout for establishing connection")
-	flag.DurationVar(&cfg.flProbeConfig.flRPCTimeout, "rpc-timeout", time.Second, "timeout for health check rpc")
+	flag.DurationVar(&cfg.FlServer.FlConnTimeout, "connect-timeout", time.Second, "timeout for establishing connection")
+	flag.DurationVar(&cfg.FlProbeConfig.FlRPCTimeout, "rpc-timeout", time.Second, "timeout for health check rpc")
 	// tls settings
-	flag.BoolVar(&probeRequestConifg.flGrpcTLS, "grpctls", false, "use TLS for upstream gRPC(default: false, INSECURE plaintext transport)")
-	flag.BoolVar(&probeRequestConifg.flGrpcTLSNoVerify, "grpc-tls-no-verify", false, "(with -tls) don't verify the certificate (INSECURE) presented by the server (default: false)")
-	flag.StringVar(&probeRequestConifg.flGrpcTLSCACert, "grpc-ca-cert", "", "(with -tls, optional) file containing trusted certificates for verifying server")
-	flag.StringVar(&probeRequestConifg.flGrpcTLSClientCert, "grpc-client-cert", "", "(with -grpctls, optional) client certificate for authenticating to the server (requires -tls-client-key)")
-	flag.StringVar(&probeRequestConifg.flGrpcTLSClientKey, "grpc-client-key", "", "(with -grpctls) client private key for authenticating to the server (requires -tls-client-cert)")
-	flag.StringVar(&probeRequestConifg.flGrpcSNIServerName, "grpc-sni-server-name", "", "(with -grpctls) override the hostname used to verify the gRPC server certificate")
-	flag.StringVar(&probeRequestConifg.flGrpcServerAddr, "grpcaddr", "", "(required) tcp host:port to connect")
+	flag.BoolVar(&probeRequestConifg.FlGrpcTLS, "grpctls", false, "use TLS for upstream gRPC(default: false, INSECURE plaintext transport)")
+	flag.BoolVar(&probeRequestConifg.FlGrpcTLSNoVerify, "grpc-tls-no-verify", false, "(with -tls) don't verify the certificate (INSECURE) presented by the server (default: false)")
+	flag.StringVar(&probeRequestConifg.FlGrpcTLSCACert, "grpc-ca-cert", "", "(with -tls, optional) file containing trusted certificates for verifying server")
+	flag.StringVar(&probeRequestConifg.FlGrpcTLSClientCert, "grpc-client-cert", "", "(with -grpctls, optional) client certificate for authenticating to the server (requires -tls-client-key)")
+	flag.StringVar(&probeRequestConifg.FlGrpcTLSClientKey, "grpc-client-key", "", "(with -grpctls) client private key for authenticating to the server (requires -tls-client-cert)")
+	flag.StringVar(&probeRequestConifg.FlGrpcSNIServerName, "grpc-sni-server-name", "", "(with -grpctls) override the hostname used to verify the gRPC server certificate")
+	flag.StringVar(&probeRequestConifg.FlGrpcServerAddr, "grpcaddr", "", "(required) tcp host:port to connect")
 
 	flag.Parse()
 
-	cfg.flProbeRequestConifg["cli"] = probeRequestConifg
+	cfg.FlProbeRequestConifg["cli"] = probeRequestConifg
 
 	if configFlag != "" {
-		yamlFile, err := ioutil.ReadFile("conf.yaml")
+		yamlFile, err := ioutil.ReadFile(configFlag)
 		if err != nil {
 			glog.Fatalf("Cannot get config file %s Get err   #%v ", configFlag, err)
+			os.Exit(-1)
 		}
 		err = yaml.Unmarshal(yamlFile, &cfg)
 		if err != nil {
 			glog.Fatalf("Config parse error: %v", err)
+			os.Exit(-1)
 		}
 	}
-
 	argError := func(s string, v ...interface{}) {
-		//flag.PrintDefaults()
+		//Flag.PrintDefaults()
 		glog.Errorf("Invalid Argument error: "+s, v...)
 		os.Exit(-1)
 	}
-
-	if !cfg.flServer.flRunCli && cfg.flServer.flHTTPListenAddr == "" {
+	if !cfg.FlServer.FlRunCli && cfg.FlServer.FlHTTPListenAddr == "" {
 		argError("-http-listen-addr not specified or server.address not set")
 	}
-	if cfg.flServer.flConnTimeout <= 0 {
-		argError("-connect-timeout or server.timeout must be greater than zero (specified: %v)", cfg.flServer.flConnTimeout)
+	if cfg.FlServer.FlConnTimeout <= 0 {
+		argError("-connect-timeout or server.timeout must be greater than zero (specified: %v)", cfg.FlServer.FlConnTimeout)
 	}
-	if cfg.flProbeConfig.flRPCTimeout <= 0 {
-		argError("-rpc-timeout or probe.config must be greater than zero (specified: %v)", cfg.flProbeConfig.flRPCTimeout)
+	if cfg.FlProbeConfig.FlRPCTimeout <= 0 {
+		argError("-rpc-timeout or probe.config must be greater than zero (specified: %v)", cfg.FlProbeConfig.FlRPCTimeout)
 	}
-	if ( (cfg.flServer.flHTTPSTLSServerCert == "" && cfg.flServer.flHTTPSTLSServerKey != "") || (cfg.flServer.flHTTPSTLSServerCert != "" && cfg.flServer.flHTTPSTLSServerKey == "") ) {
+	if ( (cfg.FlServer.FlHTTPSTLSServerCert == "" && cfg.FlServer.FlHTTPSTLSServerKey != "") || (cfg.FlServer.FlHTTPSTLSServerCert != "" && cfg.FlServer.FlHTTPSTLSServerKey == "") ) {
 		argError("must specify both -https-listen-cert and -https-listen-key")
 	}
-	if cfg.flServer.flHTTPSTLSVerifyCA == "" && cfg.flServer.flHTTPSTLSVerifyClient {
+	if cfg.FlServer.FlHTTPSTLSVerifyCA == "" && cfg.FlServer.FlHTTPSTLSVerifyClient {
 		argError("cannot specify -https-listen-ca if https-listen-verify is set (you need a trust CA for client certificate https auth)")
 	}
-	for path, config := range cfg.flProbeRequestConifg {
-		if config.flGrpcServerAddr == "" {
+	for path, config := range cfg.FlProbeRequestConifg {
+		if config.FlGrpcServerAddr == "" {
 			argError("-grpcaddr(hosts."+ path + ".address) not specified")
 		}
-		if !config.flGrpcTLS && config.flGrpcTLSNoVerify {
+		if !config.FlGrpcTLS && config.FlGrpcTLSNoVerify {
 			argError("specified -grpc-tls-no-verify(hosts."+ path + ".tlsNoVerfiy) without specifying -grpctls(hosts."+ path + ".tlsEnabled")
 		}
-		if !config.flGrpcTLS && config.flGrpcTLSCACert != "" {
+		if !config.FlGrpcTLS && config.FlGrpcTLSCACert != "" {
 			argError("specified -grpc-ca-cert(hosts."+ path + ".tlsCaPath) without specifying -grpctls(hosts."+ path + ".tlsEnabled")
 		}
-		if !config.flGrpcTLS && config.flGrpcTLSClientCert != "" {
+		if !config.FlGrpcTLS && config.FlGrpcTLSClientCert != "" {
 			argError("specified -grpc-client-cert(hosts."+ path + ".mtlsCertPath) without specifying -grpctls(hosts."+ path + ".tlsEnabled)")
 		}
-		if !config.flGrpcTLS && config.flGrpcSNIServerName != "" {
+		if !config.FlGrpcTLS && config.FlGrpcSNIServerName != "" {
 			argError("specified -grpc-sni-server-name(hosts."+ path + ".sniServerName) without specifying -grpctls(hosts."+ path + ".tlsEnabled)")
 		}
-		if config.flGrpcTLSClientCert != "" && config.flGrpcTLSClientKey == "" {
+		if config.FlGrpcTLSClientCert != "" && config.FlGrpcTLSClientKey == "" {
 			argError("specified -grpc-client-cert(hosts."+ path + ".mtlsCertPath) without specifying -grpc-client-key(hosts."+ path + ".mtlsKeyPath)")
 		}
-		if config.flGrpcTLSClientCert == "" && config.flGrpcTLSClientKey != "" {
+		if config.FlGrpcTLSClientCert == "" && config.FlGrpcTLSClientKey != "" {
 			argError("specified -grpc-client-key(hosts."+ path + ".mtlsKeyPath) without specifying -grpc-client-cert(hosts."+ path + ".mtlsCertPath")
 		}
-		if config.flGrpcTLSNoVerify && config.flGrpcTLSCACert != "" {
+		if config.FlGrpcTLSNoVerify && config.FlGrpcTLSCACert != "" {
 			argError("cannot specify -grpc-ca-cert(hosts."+ path + ".tlsCaPath) with -grpc-tls-no-verify(hosts."+ path + ".tlsNoVerify) (CA cert would not be used)")
 		}
-		if config.flGrpcTLSNoVerify && config.flGrpcSNIServerName != "" {
+		if config.FlGrpcTLSNoVerify && config.FlGrpcSNIServerName != "" {
 			argError("cannot specify -grpc-sni-server-name(hosts."+ path + ".sniServerName) with -grpc-tls-no-verify(hosts."+ path + ".tlsNoVerify) (server name would not be used)")
 		}
 	}
 
 	glog.V(10).Infof("parsed options:")
-	glog.V(10).Infof("> conn_timeout=%s rpc_timeout=%s",cfg.flServer.flConnTimeout, cfg.flProbeConfig.flRPCTimeout)
-	glog.V(10).Infof(" http-listen-addr=%s ", cfg.flServer.flHTTPListenAddr)
-	glog.V(10).Infof(" http-listen-path=%s ", cfg.flServer.flHTTPListenPath)
-	glog.V(10).Infof(" https-listen-cert=%s ", cfg.flServer.flHTTPSTLSServerCert)
-	glog.V(10).Infof(" https-listen-key=%s ", cfg.flServer.flHTTPSTLSServerKey)
-	glog.V(10).Infof(" https-listen-verify=%v ", cfg.flServer.flHTTPSTLSVerifyClient)
-	glog.V(10).Infof(" https-listen-ca=%s ", cfg.flServer.flHTTPSTLSVerifyCA)
+	glog.V(10).Infof("> conn_timeout=%s rpc_timeout=%s",cfg.FlServer.FlConnTimeout, cfg.FlProbeConfig.FlRPCTimeout)
+	glog.V(10).Infof(" http-listen-addr=%s ", cfg.FlServer.FlHTTPListenAddr)
+	glog.V(10).Infof(" http-listen-path=%s ", cfg.FlServer.FlHTTPListenPath)
+	glog.V(10).Infof(" https-listen-cert=%s ", cfg.FlServer.FlHTTPSTLSServerCert)
+	glog.V(10).Infof(" https-listen-key=%s ", cfg.FlServer.FlHTTPSTLSServerKey)
+	glog.V(10).Infof(" https-listen-verify=%v ", cfg.FlServer.FlHTTPSTLSVerifyClient)
+	glog.V(10).Infof(" https-listen-ca=%s ", cfg.FlServer.FlHTTPSTLSVerifyCA)
 
 
-	for path, config := range cfg.flProbeRequestConifg {
-		glog.V(10).Infof(">(" + path + ") grpctls=%v", config.flGrpcTLS)
-		glog.V(10).Infof("  > grpc-tls-no-verify=%v ", config.flGrpcTLSNoVerify)
-		glog.V(10).Infof("  > grpc-ca-cert=%s", config.flGrpcTLSCACert)
-		glog.V(10).Infof("  > grpc-client-cert=%s", config.flGrpcTLSClientCert)
-		glog.V(10).Infof("  > grpc-client-key=%s", config.flGrpcTLSClientKey)
-		glog.V(10).Infof("  > grpc-sni-server-name=%s", config.flGrpcSNIServerName)
+	for path, config := range cfg.FlProbeRequestConifg {
+		glog.V(10).Infof(">(" + path + ") grpctls=%v", config.FlGrpcTLS)
+		glog.V(10).Infof("  > grpc-tls-no-verify=%v ", config.FlGrpcTLSNoVerify)
+		glog.V(10).Infof("  > grpc-ca-cert=%s", config.FlGrpcTLSCACert)
+		glog.V(10).Infof("  > grpc-client-cert=%s", config.FlGrpcTLSClientCert)
+		glog.V(10).Infof("  > grpc-client-key=%s", config.FlGrpcTLSClientKey)
+		glog.V(10).Infof("  > grpc-sni-server-name=%s", config.FlGrpcSNIServerName)
 	}
 }
 
 func buildGrpcCredentials(hostConfig ProbeRequestConfig) (credentials.TransportCredentials, error) {
 	var tlsCfg tls.Config
 
-	if hostConfig.flGrpcTLSClientCert != "" && hostConfig.flGrpcTLSClientKey != "" {
-		keyPair, err := tls.LoadX509KeyPair(hostConfig.flGrpcTLSClientCert, hostConfig.flGrpcTLSClientKey)
+	if hostConfig.FlGrpcTLSClientCert != "" && hostConfig.FlGrpcTLSClientKey != "" {
+		keyPair, err := tls.LoadX509KeyPair(hostConfig.FlGrpcTLSClientCert, hostConfig.FlGrpcTLSClientKey)
 		if err != nil {
 			return nil, fmt.Errorf("failed to load tls client cert/key pair. error=%v", err)
 		}
 		tlsCfg.Certificates = []tls.Certificate{keyPair}
 	}
 
-	if hostConfig.flGrpcTLSNoVerify {
+	if hostConfig.FlGrpcTLSNoVerify {
 		tlsCfg.InsecureSkipVerify = true
-	} else if hostConfig.flGrpcTLSCACert != "" {
+	} else if hostConfig.FlGrpcTLSCACert != "" {
 		rootCAs := x509.NewCertPool()
-		pem, err := ioutil.ReadFile(hostConfig.flGrpcTLSCACert)
+		pem, err := ioutil.ReadFile(hostConfig.FlGrpcTLSCACert)
 		if err != nil {
-			return nil, fmt.Errorf("failed to load root CA certificates from file (%s) error=%v", hostConfig.flGrpcTLSCACert, err)
+			return nil, fmt.Errorf("failed to load root CA certificates from file (%s) error=%v", hostConfig.FlGrpcTLSCACert, err)
 		}
 		if !rootCAs.AppendCertsFromPEM(pem) {
-			return nil, fmt.Errorf("no root CA certs parsed from file %s", hostConfig.flGrpcTLSCACert)
+			return nil, fmt.Errorf("no root CA certs parsed from file %s", hostConfig.FlGrpcTLSCACert)
 		}
 		tlsCfg.RootCAs = rootCAs
 	}
-	if hostConfig.flGrpcSNIServerName != "" {
-		tlsCfg.ServerName = hostConfig.flGrpcSNIServerName
+	if hostConfig.FlGrpcSNIServerName != "" {
+		tlsCfg.ServerName = hostConfig.FlGrpcSNIServerName
 	}
 	return credentials.NewTLS(&tlsCfg), nil
 }
@@ -246,14 +245,14 @@ func checkService(ctx context.Context, hostConfig ProbeRequestConfig, serviceNam
 
 	glog.V(10).Infof("establishing connection")
 	connStart := time.Now()
-	dialCtx, dialCancel := context.WithTimeout(ctx, cfg.flServer.flConnTimeout)
+	dialCtx, dialCancel := context.WithTimeout(ctx, cfg.FlServer.FlConnTimeout)
 	defer dialCancel()
-	conn, err := grpc.DialContext(dialCtx, hostConfig.flGrpcServerAddr, hostConfig.opts...)
+	conn, err := grpc.DialContext(dialCtx, hostConfig.FlGrpcServerAddr, hostConfig.opts...)
 	if err != nil {
 		if err == context.DeadlineExceeded {
-			glog.Warningf("timeout: failed to connect %s service %s within %s", hostConfig.flGrpcServerAddr, cfg.flServer.flConnTimeout)
+			glog.Warningf("timeout: failed to connect %s service %s within %s", hostConfig.FlGrpcServerAddr, cfg.FlServer.FlConnTimeout)
 		} else {
-			glog.Warningf("error: failed to connect service at %s: %+v", hostConfig.flGrpcServerAddr, err)
+			glog.Warningf("error: failed to connect service at %s: %+v", hostConfig.FlGrpcServerAddr, err)
 		}
 		return healthpb.HealthCheckResponse_UNKNOWN, NewGrpcProbeError(StatusConnectionFailure, "StatusConnectionFailure")
 	}
@@ -262,7 +261,7 @@ func checkService(ctx context.Context, hostConfig ProbeRequestConfig, serviceNam
 	glog.V(10).Infof("connection established %v", connDuration)
 
 	rpcStart := time.Now()
-	rpcCtx, rpcCancel := context.WithTimeout(ctx, cfg.flProbeConfig.flRPCTimeout)
+	rpcCtx, rpcCancel := context.WithTimeout(ctx, cfg.FlProbeConfig.FlRPCTimeout)
 	defer rpcCancel()
 
 	glog.V(10).Infoln("Running HealthCheck for service: ", serviceName)
@@ -274,7 +273,7 @@ func checkService(ctx context.Context, hostConfig ProbeRequestConfig, serviceNam
 			glog.Warningf("error: this server does not implement the grpc health protocol (grpc.health.v1.Health)")
 			return healthpb.HealthCheckResponse_UNKNOWN, NewGrpcProbeError(StatusUnimplemented, "StatusUnimplemented")
 		} else if stat, ok := status.FromError(err); ok && stat.Code() == codes.DeadlineExceeded {
-			glog.Warningf("error timeout: health rpc did not complete within ", cfg.flProbeConfig.flRPCTimeout)
+			glog.Warningf("error timeout: health rpc did not complete within ", cfg.FlProbeConfig.FlRPCTimeout)
 			return healthpb.HealthCheckResponse_UNKNOWN, NewGrpcProbeError(StatusRPCFailure, "StatusRPCFailure")
 		} else if stat, ok := status.FromError(err); ok && stat.Code() == codes.NotFound {
 			// wrap a grpC NOT_FOUND as grpcProbeError.
@@ -302,7 +301,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 
 	if value, exist := vars["host"]; exist {
 		host = value
-		if config, cExist := cfg.flProbeRequestConifg[value]; cExist {
+		if config, cExist := cfg.FlProbeRequestConifg[value]; cExist {
 			probeRequestConfig = config
 		} else {
 			http.Error(w, fmt.Sprintf("%s HostNotFound", host), http.StatusNotFound)
@@ -356,11 +355,11 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 
-	for _, config := range cfg.flProbeRequestConifg {
+	for key, config := range cfg.FlProbeRequestConifg {
 		config.opts = []grpc.DialOption{}
-		config.opts = append(config.opts, grpc.WithUserAgent(cfg.flProbeConfig.flUserAgent))
+		config.opts = append(config.opts, grpc.WithUserAgent(cfg.FlProbeConfig.FlUserAgent))
 		config.opts = append(config.opts, grpc.WithBlock())
-		if config.flGrpcTLS {
+		if config.FlGrpcTLS {
 			creds, err := buildGrpcCredentials(config)
 			if err != nil {
 				glog.Fatalf("failed to initialize tls credentials. error=%v", err)
@@ -369,10 +368,11 @@ func main() {
 		} else {
 			config.opts = append(config.opts, grpc.WithInsecure())
 		}
+		cfg.FlProbeRequestConifg[key] = config
 	}
 
-	if (cfg.flServer.flRunCli) {
-		resp, err := checkService(context.Background(), cfg.flProbeRequestConifg["cli"], cfg.flServer.flServiceName)
+	if (cfg.FlServer.FlRunCli) {
+		resp, err := checkService(context.Background(), cfg.FlProbeRequestConifg["cli"], cfg.FlServer.FlServiceName)
 		if err != nil {
 			if pe, ok := err.(*GrpcProbeError); ok {
 				glog.Errorf("HealtCheck Probe Error: %v", pe.Error())
@@ -391,16 +391,16 @@ func main() {
 			}
 		}
 		if (resp != healthpb.HealthCheckResponse_SERVING) {
-			glog.Errorf("HealtCheck Probe Error: service %s failed with reason: %v",  cfg.flServer.flServiceName,  resp.String())
+			glog.Errorf("HealtCheck Probe Error: service %s failed with reason: %v",  cfg.FlServer.FlServiceName,  resp.String())
 			os.Exit(StatusUnhealthy)
 		} else {
-			glog.Infof("%s %v",  cfg.flServer.flServiceName,  resp.String())
+			glog.Infof("%s %v",  cfg.FlServer.FlServiceName,  resp.String())
 		}
 	} else {
 
 		tlsConfig := &tls.Config{}
-		if (cfg.flServer.flHTTPSTLSVerifyClient) {
-			caCert, err := ioutil.ReadFile(cfg.flServer.flHTTPSTLSVerifyCA)
+		if (cfg.FlServer.FlHTTPSTLSVerifyClient) {
+			caCert, err := ioutil.ReadFile(cfg.FlServer.FlHTTPSTLSVerifyCA)
 			if err != nil {
 				glog.Fatal(err)
 			}
@@ -417,19 +417,19 @@ func main() {
 		tlsConfig.BuildNameToCertificate()
 
 		srv := &http.Server{
-			Addr: cfg.flServer.flHTTPListenAddr,
+			Addr: cfg.FlServer.FlHTTPListenAddr,
 			TLSConfig: tlsConfig,
 		}
 		http2.ConfigureServer(srv, &http2.Server{})
 		rtr := mux.NewRouter()
-		rtr.HandleFunc(cfg.flServer.flHTTPListenPath + "/{host:.+}/{service:.+}", healthHandler).Methods("GET")
-                rtr.HandleFunc(cfg.flServer.flHTTPListenPath + "/{host:.+}", healthHandler).Methods("GET")
-                rtr.HandleFunc(cfg.flServer.flHTTPListenPath + "/", healthHandler).Methods("GET")
-		http.Handle(cfg.flServer.flHTTPListenPath, rtr)
+		rtr.HandleFunc(cfg.FlServer.FlHTTPListenPath + "/{host:.+}/{service:.+}", healthHandler)
+                rtr.HandleFunc(cfg.FlServer.FlHTTPListenPath + "/{host:.+}", healthHandler)
+                rtr.HandleFunc(cfg.FlServer.FlHTTPListenPath + "/", healthHandler)
+		http.Handle("/", rtr)
 
 		var err error
-		if (cfg.flServer.flHTTPSTLSServerCert != "" && cfg.flServer.flHTTPSTLSServerKey != "" ) {
-			err = srv.ListenAndServeTLS(cfg.flServer.flHTTPSTLSServerCert, cfg.flServer.flHTTPSTLSServerKey)
+		if (cfg.FlServer.FlHTTPSTLSServerCert != "" && cfg.FlServer.FlHTTPSTLSServerKey != "" ) {
+			err = srv.ListenAndServeTLS(cfg.FlServer.FlHTTPSTLSServerCert, cfg.FlServer.FlHTTPSTLSServerKey)
 		} else {
 			err = srv.ListenAndServe()
 		}
